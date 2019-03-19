@@ -1,0 +1,5 @@
+README
+
+This directory holds files named *.token, which must contain the vagrant-cloud
+access token for the account used to upload the box.
+
