@@ -1,3 +1,4 @@
+*.box
 target
 packer_cache
 bin/packer
