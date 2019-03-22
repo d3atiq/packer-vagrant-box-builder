@@ -13,9 +13,9 @@
       "vm_name": "ubuntu-18.04-server-base",
       "disk_interface": "virtio",
       "net_device": "virtio-net",
-      "output_directory": "target/qemu",
+      "output_directory": ".ubuntu-16.04-server-base-target",
       "format": "qcow2",
-      "disk_size": 5120,
+      "disk_size": 3072,
       "iso_url": "http://archive.ubuntu.com/ubuntu/dists/bionic/main/installer-amd64/current/images/netboot/mini.iso",
       "iso_checksum": "bed8a55ae2a657f8349fe3271097cff3a5b8c3d1048cf258568f1601976fa30d",
       "iso_checksum_type": "sha256",
@@ -27,7 +27,7 @@
       "boot_wait": "5s",
       "boot_command": [
         "<esc>",
-        "install ",
+        "cli ",
         "initrd=/install/initrd.gz ",
         "preseed/url=http://{{.HTTPIP}}:{{.HTTPPort}}/preseed.cfg ",
         "auto=true ",
@@ -47,16 +47,26 @@
         "#!/bin/sh",
         "for i in \\$(ls /sys/class/net | grep -v lo) ; do",
         "dhclient \"\\$i\"",
-        "cat >\"/tmp/\\$i.yaml\" <<EOFR",
-        "---",
-        "network:",
-        "  version: 2",
-        "  renderer: networkd",
-        "  ethernets:",
-        "    \\$i:",
-        "      dhcp4: true",
+        "### begin of netplan config",
+        "#cat >\"/tmp/\\$i.yaml\" <<EOFR",
+        "#---",
+        "#network:",
+        "#  version: 2",
+        "#  renderer: networkd",
+        "#  ethernets:",
+        "#    \\$i:",
+        "#      dhcp4: true",
+        "#EOFR",
+        "#sudo mv \"/tmp/\\$i.yaml\" /etc/netplan",
+        "### end of netplan config",
+        "### begin of ifupdown config",
+        "cat >\"/tmp/\\$i.iface\" <<EOFR",
+        "auto \\$i",
+        "iface \\$i inet dhcp",
         "EOFR",
-        "sudo mv \"/tmp/\\$i.yaml\" /etc/netplan",
+        "sudo mv \"/tmp/\\$i.iface\" /etc/network/interfaces.d",
+        "sudo systemctl restart networking",
+        "### end of ifupdown config",
         "break",
         "done",
         "sed -i '/network-detection\\.sh/d' /etc/rc.local",
@@ -86,12 +96,23 @@
       ]
     },
     {
-      "type": "shell-local",
-      "command": "mkdir -p target/.ssh && curl -so target/.ssh/authorized_keys https://raw.githubusercontent.com/mitchellh/vagrant/master/keys/vagrant.pub"
+      "type": "shell",
+      "inline": [
+        "# Remove netplan extra packages and add ifupdown stuff",
+        "sudo apt-get purge -y netplan.io",
+        "sudo apt-get autoremove -y",
+        "sudo rm -rf /etc/netplan",
+        "sudo apt-get install -y ifupdown resolvconf",
+        "cat >/tmp/interfaces <<EOF",
+        "source /etc/network/interfaces.d/*",
+        "EOF",
+	"sudo mv /etc/network/interfaces /etc/network/interfaces.original",
+        "sudo mv /tmp/interfaces /etc/network/interfaces"
+      ]
     },
     {
       "type": "file",
-      "source": "target/.ssh",
+      "source": ".ssh",
       "destination": "/home/vagrant"
     },
     {
@@ -105,8 +126,11 @@
       ]
     },
     {
-      "type": "shell-local",
-      "command": "rm -rf target/.ssh"
+      "type": "shell",
+      "inline": [
+        "# remove any previously created netplan configuration file",
+        "sudo rm -f /etc/netplan/*.yaml"
+      ]
     },
     {
       "type": "shell",
