@@ -13,7 +13,7 @@
       "vm_name": "ubuntu-18.04-server-base",
       "disk_interface": "virtio",
       "net_device": "virtio-net",
-      "output_directory": ".ubuntu-16.04-server-base-target",
+      "output_directory": ".ubuntu-18.04-server-base-target",
       "format": "qcow2",
       "disk_size": 3072,
       "iso_url": "http://archive.ubuntu.com/ubuntu/dists/bionic/main/installer-amd64/current/images/netboot/mini.iso",
