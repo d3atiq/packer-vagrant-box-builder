@@ -1,6 +1,7 @@
 *.box
 target
 .ubuntu*
+*.retry
 packer_cache
 .ssh
 bin/packer
