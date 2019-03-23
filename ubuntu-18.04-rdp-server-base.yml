@@ -1,0 +1,6 @@
+# ubuntu-18.04-rdp-server-base: Ubuntu 18.04 RDP server Vagrant box
+---
+- hosts: all
+  become: true
+  roles:
+  - d3atiq.bionic_rdp_server
