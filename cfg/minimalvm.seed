@@ -8,10 +8,13 @@ d-i localechooser/supported-locales multiselect C.UTF-8
 d-i time/zone string UTC
 d-i clock-setup/utc-auto boolean true
 
+d-i netcfg/do_not_use_netplan boolean true
+
 d-i mirror/country string US
 d-i mirror/http/proxy string
 
 d-i	base-installer/kernel/override-image	string linux-virtual
+d-i preseed base-installer/install-recommends boolean false
 
 d-i partman/confirm_write_new_label boolean true
 d-i partman/choose_partition select finish
@@ -20,17 +23,17 @@ d-i partman/default_filesystem string ext4
 d-i partman/confirm boolean true
 d-i partman/confirm_nooverwrite boolean true
 d-i partman-auto/choose_recipe select atomic
-d-i partman-auto/method string lvm
+d-i partman-auto/method string regular
 d-i partman-lvm/confirm boolean true
 d-i partman-lvm/confirm_nooverwrite boolean true
 d-i partman-partitioning/confirm_write_new_label boolean true
 
 tasksel	tasksel/skip-tasks	string standard
-tasksel tasksel/first	string openssh-server
-d-i	pkgsel/include openssh-server
-d-i	pkgsel/include python-minimal
+#tasksel tasksel/first	string openssh-server
+#d-i	pkgsel/include python-minimal rsync
 d-i	pkgsel/language-pack-patterns	string
 d-i	pkgsel/install-language-support	boolean false
+
 d-i	clock-setup/utc-auto	boolean true
 d-i	debian-installer/quiet	boolean false
 d-i	debian-installer/splash	boolean false
@@ -50,6 +53,6 @@ d-i finish-install/reboot_in_progress note
 # set vagrant with passwordless sudo
 d-i preseed/late_command string \
     echo 'vagrant ALL=(ALL) NOPASSWD:ALL' >/target/etc/sudoers.d/vagrant; \
-    in-target chmod 440 /etc/sudoers.d/vagrant ;
+    in-target chmod 440 /etc/sudoers.d/vagrant ; 
 
 

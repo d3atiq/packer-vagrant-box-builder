@@ -30,6 +30,7 @@
         "<esc>",
         "cli ",
         "initrd=/install/initrd.gz ",
+        "ks=http://{{.HTTPIP}}:{{.HTTPPort}}/ks.cfg ",
         "preseed/url=http://{{.HTTPIP}}:{{.HTTPPort}}/minimalvm.seed ",
         "auto=true ",
         "priority=critical ",
