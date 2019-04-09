@@ -1,5 +1,6 @@
 *.box
 target
+.target
 .ubuntu*
 *.retry
 packer_cache

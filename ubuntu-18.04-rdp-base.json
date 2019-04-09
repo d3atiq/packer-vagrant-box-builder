@@ -104,7 +104,7 @@
         "sudo apt-get purge -y netplan.io",
         "sudo apt-get autoremove -y",
         "sudo rm -rf /etc/netplan",
-        "sudo apt-get install -y ifupdown resolvconf",
+        "sudo apt-get install -y ifupdown resolvconf net-tools",
         "cat >/tmp/interfaces <<EOF",
         "source /etc/network/interfaces.d/*",
         "EOF",
@@ -136,6 +136,7 @@
     },
     {
       "type": "ansible",
+      "user": "vagrant",
       "playbook_file": "./ubuntu-18.04-rdp-base.yml"
     }
   ],
